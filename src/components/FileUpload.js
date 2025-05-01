@@ -18,11 +18,19 @@ const FileUpload = ({ onFileProcessed }) => {
     setIsProcessing(true);
     try {
       const file = acceptedFiles[0];
+      const formData = new FormData()
+      formData.append("file", file)
+
+      console.log(formData)
+      // Call API to upload form data from here -
+
+      
+      // console.log("File Contents: " + file.name)
       // const text = await file.text();
-      const loadingTask = pdfjsLib.getDocument('./test.pdf');
-      loadingTask.promise.then(pdf => {
-        console.log('PDF loaded', pdf);
-      });
+      // const loadingTask = pdfjsLib.getDocument('./test.pdf');
+      // loadingTask.promise.then(pdf => {
+      //   console.log('PDF loaded', pdf);
+      // });
 
       // const transactions = parsePdfText(text);
       // onFileProcessed(transactions);
