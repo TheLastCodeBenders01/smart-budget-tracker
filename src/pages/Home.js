@@ -1,13 +1,13 @@
 import React from 'react';
-import { Box, Typography, Button, Container } from '@mui/material';
+import { Box, Typography, Container } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import FileUpload from '../components/FileUpload';
 
 const Home = () => {
   const navigate = useNavigate();
   
-  const handleFileProcessed = (transactions) => {
-    navigate('/analysis', { state: { transactions } });
+  const handleFileProcessed = (result) => {
+    navigate('/analysis', { state: { result } });
   };
 
   return (

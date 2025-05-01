@@ -1,152 +1,109 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { 
-  Box, 
-  Typography, 
-  Container, 
-  Button, 
-  Tabs, 
-  Tab,
-  Paper,
-  CircularProgress
-} from '@mui/material';
+import React from 'react';
+import { useLocation } from 'react-router-dom';
+import { Box, Typography, Container, Paper } from '@mui/material';
+import { Bar } from 'react-chartjs-2';
 import {
-  Receipt as TransactionsIcon,
-  PieChart as ChartsIcon,
-  Insights as InsightsIcon,
-  Share as ShareIcon,
-  Download as DownloadIcon
-} from '@mui/icons-material';
-import SummaryCards from '../components/SummaryCards';
-import TransactionTable from '../components/TransactionTable';
-import MonthlySpendingChart from '../components/charts/MonthlySpendingChart';
-import CategorySpendingChart from '../components/charts/CategorySpendingChart';
-import BalanceTrendChart from '../components/charts/BalanceTrendChart';
-import AIInsights from '../components/AIInsights';
-import { processTransactions } from '../utils/transactionProcessor';
-import format from 'date-fns/format';
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
+// Register Chart.js components
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          {children}
-        </Box>
-      )}
-    </div>
-  );
-}
-
-const AnalysisResults = () => {
+const Analysis = () => {
   const location = useLocation();
-  const navigate = useNavigate();
-  const [tabValue, setTabValue] = useState(0);
-  const [processedData, setProcessedData] = useState(null);
-  
-  // Get transactions from navigation state
-  const transactions = location.state?.transactions || [];
-  
-  useEffect(() => {
-    if (transactions.length > 0) {
-      const data = processTransactions(transactions);
-      setProcessedData(data);
-    } else {
-      // No transactions, redirect back to home
-      navigate('/');
-    }
-  }, [transactions, navigate]);
+  const { state } = location;
+  const { result } = state || {};
 
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
-
-  const handleNewUpload = () => {
-    navigate('/');
-  };
-
-  if (!processedData) {
+  if (!result) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-        <CircularProgress />
-      </Box>
+      <Container maxWidth="md" sx={{ textAlign: 'center', mt: 8 }}>
+        <Typography variant="h5" color="error">
+          No data available. Please upload a bank statement first.
+        </Typography>
+      </Container>
     );
   }
 
+  const { advice, summary, data } = result.data;
+  console.log('Analysis Result:', result);
+
+  // Prepare data for the bar chart
+  const chartData = {
+    labels: Object.keys(data),
+    datasets: [
+      {
+        label: 'Amount Spent (₦)',
+        data: Object.values(data).map((value) => {
+          // Ensure the value is a string before calling replace
+          const numericValue = typeof value === 'string' 
+            ? parseFloat(value.replace(/,/g, '')) 
+            : value;
+          return numericValue;
+        }),
+        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Spending Categories',
+      },
+    },
+  };
+
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" sx={{ mt: 8 }}>
+      <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: 'bold', textAlign: 'center' }}>
+        Spending Analysis
+      </Typography>
+
       <Box sx={{ my: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
-          Statement Analysis
-        </Typography>
-        <Typography variant="subtitle1" color="text.secondary" gutterBottom>
-          {format(processedData.summary.startDate, 'MMM dd, yyyy')} - {format(processedData.summary.endDate, 'MMM dd, yyyy')}
-        </Typography>
-        
-        <Box sx={{ display: 'flex', gap: 2, my: 2 }}>
-          <Button 
-            variant="outlined" 
-            startIcon={<ShareIcon />}
-            onClick={() => alert('Share functionality coming soon')}
-          >
-            Share
-          </Button>
-          <Button 
-            variant="outlined" 
-            startIcon={<DownloadIcon />}
-            onClick={() => alert('Export functionality coming soon')}
-          >
-            Export
-          </Button>
-          <Button 
-            variant="contained" 
-            onClick={handleNewUpload}
-            sx={{ ml: 'auto' }}
-          >
-            Analyze Another Statement
-          </Button>
-        </Box>
-        
-        <SummaryCards transactions={transactions} />
-        
-        <Paper sx={{ my: 4 }}>
-          <Tabs 
-            value={tabValue} 
-            onChange={handleTabChange} 
-            variant="fullWidth"
-            indicatorColor="primary"
-            textColor="primary"
-          >
-            <Tab icon={<TransactionsIcon />} label="Transactions" />
-            <Tab icon={<ChartsIcon />} label="Charts" />
-            <Tab icon={<InsightsIcon />} label="AI Insights" />
-          </Tabs>
-          
-          <TabPanel value={tabValue} index={0}>
-            <TransactionTable transactions={transactions} />
-          </TabPanel>
-          
-          <TabPanel value={tabValue} index={1}>
-            <MonthlySpendingChart transactions={transactions} />
-            <CategorySpendingChart transactions={transactions} />
-            <BalanceTrendChart transactions={transactions} />
-          </TabPanel>
-          
-          <TabPanel value={tabValue} index={2}>
-            <AIInsights transactions={transactions} />
-          </TabPanel>
+        <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
+          <Typography variant="h6" gutterBottom>
+            Summary
+          </Typography>
+          <Typography variant="body1" color="text.secondary" sx={{ whiteSpace: 'pre-line' }}>
+            {summary}
+          </Typography>
+        </Paper>
+      </Box>
+
+      <Box sx={{ my: 4 }}>
+        <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
+          <Typography variant="h6" gutterBottom>
+            Financial Advice
+          </Typography>
+          <Typography variant="body1" color="text.secondary" sx={{ whiteSpace: 'pre-line' }}>
+            {advice}
+          </Typography>
+        </Paper>
+      </Box>
+
+      <Box sx={{ my: 4 }}>
+        <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
+          <Typography variant="h6" gutterBottom>
+            Spending Categories
+          </Typography>
+          <Bar data={chartData} options={chartOptions} />
         </Paper>
       </Box>
     </Container>
   );
 };
 
-export default AnalysisResults;
+export default Analysis;

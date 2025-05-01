@@ -21,15 +21,6 @@ const Navbar = () => {
         >
           Home
         </Button>
-        <Button 
-          variant="outlined" 
-          color="inherit" 
-          component={Link} 
-          to="/" 
-          sx={{ textTransform: 'none' }}
-        >
-          Analyze Statement
-        </Button>
       </Toolbar>
     </AppBar>
   );
