@@ -25,7 +25,7 @@ const FileUpload = ({ onFileProcessed }) => {
       // Call API to upload form data from here -
       console.log(analyzeTransactions(formData))
 
-      
+
       // console.log("File Contents: " + file.name)
       // const text = await file.text();
       // const loadingTask = pdfjsLib.getDocument('./test.pdf');
