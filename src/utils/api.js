@@ -1,29 +1,18 @@
 import axios from 'axios';
+const FormData = require('form-data');
 
-const API_BASE_URL = 'https://your-backend-api.com';
+const API_BASE_URL = 'http://bread-budget-backend-production.up.railway.app/';
 
 export const analyzeTransactions = async (transactions) => {
-  try {
-    const response = await axios.post(`${API_BASE_URL}/analyze`, {
-      transactions,
-      currency: 'NGN' // Specify Nigerian Naira
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error analyzing transactions:', error);
-    throw error;
-  }
-};
+  const form = new FormData();
+  const filePath = './state.pdf'; // Path to your PDF file
+  form.append('file', filePath); // Append the file to the form data
 
-export const getFinancialTips = async (analysisData) => {
-  try {
-    const response = await axios.post(`${API_BASE_URL}/tips`, {
-      ...analysisData,
-      country: 'Nigeria' // Provide context for location-specific tips
+  axios.post(API_BASE_URL, form)
+    .then(response => {
+      console.log('Response:', response.data);
+    })
+    .catch(error => {
+      console.error('Error:', error.message);
     });
-    return response.data;
-  } catch (error) {
-    console.error('Error getting financial tips:', error);
-    throw error;
-  }
 };

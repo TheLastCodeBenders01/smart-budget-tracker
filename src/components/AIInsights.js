@@ -22,7 +22,7 @@ import {
   TrendingUp as TrendUpIcon,
   TrendingDown as TrendDownIcon
 } from '@mui/icons-material';
-import { analyzeTransactions, getFinancialTips } from '../utils/api';
+import { analyzeTransactions,  } from '../utils/api';
 
 const AIInsights = ({ transactions }) => {
   const [insights, setInsights] = useState(null);
@@ -44,13 +44,12 @@ const AIInsights = ({ transactions }) => {
       const analysis = await analyzeTransactions(transactions);
       
       // Get personalized tips
-      const tips = await getFinancialTips(analysis);
+  
       
       // Detect any anomalies
       
       setInsights({
         analysis,
-        tips,
       });
     } catch (err) {
       setError('Failed to generate insights. Please try again later.');

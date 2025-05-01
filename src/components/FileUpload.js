@@ -3,6 +3,7 @@ import { useDropzone } from 'react-dropzone';
 import {Box, Typography, CircularProgress } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import * as pdfjsLib from 'pdfjs-dist/build/pdf';
+import { analyzeTransactions } from '../utils/api';
 
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `${process.env.PUBLIC_URL}/pdf.worker.mjs`;
@@ -21,8 +22,8 @@ const FileUpload = ({ onFileProcessed }) => {
       const formData = new FormData()
       formData.append("file", file)
 
-      console.log(formData)
       // Call API to upload form data from here -
+      console.log(analyzeTransactions(formData))
 
       
       // console.log("File Contents: " + file.name)
