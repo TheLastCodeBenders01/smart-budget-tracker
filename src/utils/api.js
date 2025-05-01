@@ -1,7 +1,7 @@
 import axios from 'axios';
 const FormData = require('form-data');
 
-const API_BASE_URL = 'http://bread-budget-backend-production.up.railway.app/';
+const API_BASE_URL = 'http://bread-budget-backend-production.up.railway.app/transaction-summary';
 
 export const analyzeTransactions = async (transactions) => {
   const form = new FormData();
