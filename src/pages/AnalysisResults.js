@@ -38,7 +38,7 @@ const Analysis = () => {
     labels: Object.keys(data),
     datasets: [
       {
-        label: 'Amount Spent (₦)',
+        label: 'Amount Spent (%)',
         data: Object.values(data).map((value) => {
           // Ensure the value is a string before calling replace
           const numericValue = typeof value === 'string' 

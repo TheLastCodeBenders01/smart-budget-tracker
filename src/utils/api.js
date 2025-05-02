@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://bread-budget-backend-production.up.railway.app/';
+const API_BASE_URL = 'https://bread-budget-backend-production.up.railway.app/';
 
 // export const analyzeTransactions = async (transactions) => {
 //   // const form = new FormData();
@@ -18,7 +18,7 @@ const API_BASE_URL = 'http://bread-budget-backend-production.up.railway.app/';
 
 export const analyzeTransactions = async (formData) => {
   try {
-    const response = await fetch('http://bread-budget-backend-production.up.railway.app/transaction-summary', {
+    const response = await fetch('https://bread-budget-backend-production.up.railway.app/transaction-summary', {
       method: 'POST',
       body: formData,
     });
